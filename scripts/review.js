@@ -9,13 +9,33 @@ async function runReview() {
   const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
   const result = await model.generateContent(`
-You are a senior Flutter developer reviewing a pull request.
+    You are a senior Flutter developer reviewing a pull request.
 
-Analyze the following code changes and provide:
+    Analyze the following code changes and provide a structured review.
 
-- Issues
-- Suggestions
-- Flutter best practices
+    Your response MUST include the following sections:
+
+    1. Issues
+    - List bugs, bad practices, or potential problems.
+
+    2. Suggestions
+    - Provide actionable improvements.
+
+    3. Flutter Best Practices
+    - Mention Flutter-specific improvements (performance, widget usage, rebuild optimization, etc.)
+
+    4. Code Quality Score (1-10)
+    - Give a score where:
+    1 = very poor
+    10 = production-ready, high quality
+
+    5. Final Verdict
+    - Clearly state ONE of the following:
+    - ✅ Safe to Merge
+    - ⚠️ Needs Improvement
+    - ❌ Requires Urgent Fixes
+
+    - Keep the response concise, professional, and easy to scan.
 
 Code changes:
 ${diff}
