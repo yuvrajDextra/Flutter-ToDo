@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  print("App started"); // Debug print (AI should flag this)
-  runApp(MyApp()); // Missing const (AI should suggest)
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key}); // constructor should be const
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        ),
-        home: MyHomePage(title: 'Flutter Demo Home Page'),
+    return MaterialApp(
+      title: 'Flutter Counter App',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
+      home: const MyHomePage(title: 'Flutter Counter Home'),
     );
   }
 }
@@ -34,47 +33,73 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  void _incrementCounter() {
-    print("Counter incremented"); // AI should warn about debug prints
+  void _incrementCounter() => setState(() => _counter++);
 
-    setState(() {
-      _counter++;
-    });
-  }
-
-  Widget _buildCounterText() {
-    // unnecessary widget rebuild example
-    return Text(
-      '$_counter',
-      style: Theme.of(context).textTheme.headlineMedium,
-    );
-  }
+  void _resetCounter() => setState(() => _counter = 0);
 
   @override
   Widget build(BuildContext context) {
-    print("Widget rebuild"); // AI should detect unnecessary logging
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.red, // ignoring theme usage
         title: Text(widget.title),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('You have pushed the button this many times:'),
-            _buildCounterText(),
-          ],
+        child: CounterView(
+          counter: _counter,
+          textTheme: textTheme,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _incrementCounter();
-        },
-        tooltip: 'Increment',
-        child: Icon(Icons.add), // missing const
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton(
+            onPressed: _incrementCounter,
+            tooltip: 'Increment',
+            child: const Icon(Icons.add),
+          ),
+          const SizedBox(height: 12),
+          FloatingActionButton(
+            onPressed: _resetCounter,
+            tooltip: 'Reset',
+            backgroundColor: Colors.redAccent,
+            child: const Icon(Icons.refresh),
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class CounterView extends StatelessWidget {
+  final int counter;
+  final TextTheme textTheme;
+
+  const CounterView({
+    super.key,
+    required this.counter,
+    required this.textTheme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          'You have pushed the button this many times:',
+        ),
+        const SizedBox(height: 12),
+        Text(
+          '$counter',
+          style: textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }
